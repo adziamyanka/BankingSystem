@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using BankingSystemTestProject.Common;
 using NUnit.Framework;
 
 namespace BankingSystemTestProject.NUnitTests
@@ -31,11 +32,11 @@ namespace BankingSystemTestProject.NUnitTests
 
             ValidateSuccessfulResult();
         }
-
+      
         [Test]
-        [TestCase(200, -1, "Withdrawal amount should be more than $0.")]
-        [TestCase(1000, 900, "A user cannot withdraw more than 90% of their total balance from an account in a single transaction.")]
-        [TestCase(101, 2, "An account cannot have less than $100 at any time in an account.")]
+        [TestCase(200, -1, ErrorMessages.NegativeWithdrawal)]
+        [TestCase(1000, 900, ErrorMessages.WithdrawalLimit)]
+        [TestCase(101, 2, ErrorMessages.BalanceMinLimit)]
         public async Task WithdrawUnexpectedAmount(int balance, int withdrawal, string errorMessage)
         {
             await CreateAccount(TestUserName, balance); 

@@ -10,11 +10,10 @@ namespace BankingSystemWebApi.Controllers
     [Route("[controller]")]
     public class BankingSystemController : ControllerBase
     {
-        private static UserManager _userManager = new ();
-        private readonly IUserManager userManager2;
+        private readonly IUserManager _userManager;
         public BankingSystemController(IUserManager userManager)
         {
-            userManager2 = userManager;
+            _userManager = userManager;
         }
 
         [HttpGet("GetAllUsers")]
@@ -24,13 +23,21 @@ namespace BankingSystemWebApi.Controllers
         }
 
         [HttpGet("GetUser")]
-        public User GetUser(string userName)
+        public ActionResult GetUser([Required] string userName)
         {
-            return _userManager.GetUserByName(userName.ToLower());
+            try
+            {
+                var user = _userManager.GetUserByName(userName.ToLower());
+                return new ObjectResult(user);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { status = ResponseStatus.Error, message = ex.Message });
+            }
         }
 
         [HttpPost("CreateUser")]
-        public ActionResult CreateUser(string userName)
+        public ActionResult CreateUser([Required] string userName)
         {
             try
             {
@@ -44,7 +51,7 @@ namespace BankingSystemWebApi.Controllers
         }
 
         [HttpPost("CreateAccount")]
-        public ActionResult CreateAccount(string userName, int balance)
+        public ActionResult CreateAccount([Required] string userName, [Required] int balance)
         {
             try
             {
@@ -58,7 +65,7 @@ namespace BankingSystemWebApi.Controllers
         }
 
         [HttpDelete("DeleteAccount")]
-        public ActionResult DeleteAccount(string userName, [Required] int accountId)
+        public ActionResult DeleteAccount([Required] string userName, [Required] int accountId)
         {
             try
             {
@@ -86,7 +93,7 @@ namespace BankingSystemWebApi.Controllers
         }
 
         [HttpPost("DepositToAccount")]
-        public ActionResult DepositToAccount(string userName, int accountId, int deposit)
+        public ActionResult DepositToAccount([Required] string userName, [Required] int accountId, [Required] int deposit)
         {
             try
             {
@@ -100,7 +107,7 @@ namespace BankingSystemWebApi.Controllers
         }
 
         [HttpPost("WithdrawFromAccount")]
-        public ActionResult WithdrawFromAccount(string userName, int accountId, int withdrawal)
+        public ActionResult WithdrawFromAccount([Required] string userName, [Required] int accountId, [Required] int withdrawal)
         {
             try
             {

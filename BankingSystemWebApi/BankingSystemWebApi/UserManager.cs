@@ -5,61 +5,44 @@ using BankingSystemWebApi.DataModels;
 
 namespace BankingSystemWebApi
 {
-    public interface IUserManager
-    {
-    }
-
     public class UserManager : IUserManager
     {
-        private static Dictionary<string, User> Users { get; set; }
+        private Dictionary<string, User> _users = new ();
         private const int MinAccountLimit = 100;
         private const int MaxDepositLimit = 10000;
         private const double WithdrawLimit = 0.90;
 
-        public UserManager()
-        {
-            Users = new Dictionary<string, User>();
-            Users.TryAdd("markus",
-                new User()
-                {
-                    UserName = "Markus",
-                    Accounts = new List<Account>
-                    {
-                        new() {Id = 1, Balance = 105},
-                        new() {Id = 2, Balance = 210}
-                    }
-                });
-        }
-
         public List<User> GetAllUsers()
         {
-            return Users.Select(x => x.Value).ToList();
+            return _users.Select(x => x.Value).ToList();
         }
 
         public User GetUserByName(string userName)
         {
-            return Users.TryGetValue(userName, out var user) ? user : new User();
+            if (!_users.TryGetValue(userName, out var user))
+                throw new Exception($"User {userName} doesn't exist.");
+
+            return user;
         }
 
         public User CreateUser(string userName)
         {
-            if (Users.ContainsKey(userName))
+            if (_users.ContainsKey(userName))
                 throw new Exception($"User {userName} already exists.");
 
-
-            if (Users.TryAdd(userName,
+            if (_users.TryAdd(userName,
                     new User()
                     {
                         UserName = userName
                     })) 
-                return Users[userName];
+                return _users[userName];
 
             throw new Exception($"User {userName} wasn't created.");
         }
 
         public void CreateAccount(string userName, int balance)
         {
-            if (!Users.ContainsKey(userName))
+            if (!_users.ContainsKey(userName))
                 throw new Exception($"User {userName} doesn't exist.");
 
             if (balance < MinAccountLimit)
@@ -67,13 +50,13 @@ namespace BankingSystemWebApi
             if (balance > MaxDepositLimit)
                 throw new Exception ($"A user cannot deposit more than ${MaxDepositLimit} in a single transaction.");
             
-            Users[userName].Accounts ??= new List<Account>();
-            Users[userName].Accounts.Add(new Account() {Id = Users[userName].Accounts.Count + 1, Balance = balance});
+            _users[userName].Accounts ??= new List<Account>();
+            _users[userName].Accounts.Add(new Account() {Id = _users[userName].Accounts.Count + 1, Balance = balance});
         }
 
         public void DeleteAccount(string userName, int accountId)
         {
-            if (!Users.TryGetValue(userName, out var user))
+            if (!_users.TryGetValue(userName, out var user))
                 throw new Exception($"User {userName} doesn't exist.");
 
             if(user.Accounts == null)
@@ -88,16 +71,16 @@ namespace BankingSystemWebApi
 
         public void DeleteUser(string userName)
         {
-            if (!Users.ContainsKey(userName))
+            if (!_users.ContainsKey(userName))
                 throw new Exception($"User {userName} doesn't exist.");
 
-            if(!Users.Remove(userName))
+            if(!_users.Remove(userName))
                 throw new Exception($"User {userName} wasn't removed.");
         }
 
         public void DepositToAccount(string userName, int accountId, int deposit)
         {
-            if (!Users.TryGetValue(userName, out var user))
+            if (!_users.TryGetValue(userName, out var user))
                 throw new Exception($"User {userName} doesn't exist.");
 
             var account = user.Accounts.FirstOrDefault(x => x.Id == accountId);
@@ -114,7 +97,7 @@ namespace BankingSystemWebApi
 
         public void WithdrawFromAccount(string userName, int accountId, int withdrawal)
         {
-            if (!Users.TryGetValue(userName, out var user))
+            if (!_users.TryGetValue(userName, out var user))
                 throw new Exception($"User {userName} doesn't exist.");
 
             var account = user.Accounts.FirstOrDefault(x => x.Id == accountId);
@@ -126,7 +109,7 @@ namespace BankingSystemWebApi
             if (withdrawal > account.Balance)
                 throw new Exception("Account balance less than user wants to withdraw.");
             if (account.Balance - withdrawal < MinAccountLimit)
-                throw new Exception($"An account cannot have less than ${MinAccountLimit} at any time in an account.");
+                throw new Exception($"An account cannot have less than ${MinAccountLimit}.");
             if (account.Balance * WithdrawLimit <= withdrawal)
                 throw new Exception(
                     $"A user cannot withdraw more than {WithdrawLimit * 100}% of their total balance from an account in a single transaction.");

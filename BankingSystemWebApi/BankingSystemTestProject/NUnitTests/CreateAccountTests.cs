@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using BankingSystemTestProject.Common;
 using NUnit.Framework;
 
 namespace BankingSystemTestProject.NUnitTests
@@ -30,10 +31,10 @@ namespace BankingSystemTestProject.NUnitTests
         }
 
         [Test]
-        [TestCase(0,  "An account cannot have less than $100.")]
-        [TestCase(-1, "An account cannot have less than $100.")]
-        [TestCase(99, "An account cannot have less than $100.")]
-        [TestCase(10001, "A user cannot deposit more than $10000 in a single transaction.")]
+        [TestCase(0, ErrorMessages.BalanceMinLimit)]
+        [TestCase(-1, ErrorMessages.BalanceMinLimit)]
+        [TestCase(99, ErrorMessages.BalanceMinLimit)]
+        [TestCase(10001, ErrorMessages.SingleTransaction)]
         public async Task CreateAccountWithUnexpectedBalance(int balance, string errorMessage)
         {
             await CreateAccount(TestUserName, balance);

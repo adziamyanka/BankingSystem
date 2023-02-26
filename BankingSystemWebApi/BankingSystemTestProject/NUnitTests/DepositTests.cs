@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using BankingSystemTestProject.Common;
 using NUnit.Framework;
 
 namespace BankingSystemTestProject.NUnitTests
@@ -29,10 +30,10 @@ namespace BankingSystemTestProject.NUnitTests
 
             ValidateSuccessfulResult();
         }
-
+     
         [Test]
-        [TestCase(-1, "Deposit should be more than $0.")]
-        [TestCase(10001, "A user cannot deposit more than $10000 in a single transaction.")]
+        [TestCase(-1, ErrorMessages.NegativeDeposit)]
+        [TestCase(10001, ErrorMessages.SingleTransaction)]
         public async Task DepositUnexpectedAmount(int deposit, string errorMessage)
         {
             await DepositToAccount(TestUserName, DefaultAccountId, deposit);

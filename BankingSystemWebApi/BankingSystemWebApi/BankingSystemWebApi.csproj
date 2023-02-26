@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>1d9a9f47-9598-42e5-bc3d-315cbc7bab45</UserSecretsId>
-    <!--<DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>-->
-    <!--<DockerfileContext>.</DockerfileContext>-->
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
