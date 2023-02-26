@@ -7,11 +7,13 @@ namespace BankingSystemTestProject.NUnitTests
     [TestFixture]
     public class DepositTests : TestBase
     {
+        private const int DefaultBalance = 300;
+
         [SetUp]
         public async Task SetUpTestUserWithAccount()
         {
             await CreateUser(TestUserName);
-            await CreateAccount(TestUserName, 300);
+            await CreateAccount(TestUserName, DefaultBalance);
         }
 
         [TearDown]
@@ -29,6 +31,10 @@ namespace BankingSystemTestProject.NUnitTests
             await DepositToAccount(TestUserName, DefaultAccountId, deposit);
 
             ValidateSuccessfulResult();
+
+            await GetUser(TestUserName);
+
+            ValidateDefaultAccountBalance(DefaultBalance + deposit);
         }
      
         [Test]

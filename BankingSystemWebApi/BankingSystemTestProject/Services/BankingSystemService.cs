@@ -8,6 +8,16 @@ namespace BankingSystemTestProject.Services
         private static readonly HttpClient HttpClient = new ();
         private const string BaseUrl = "http://localhost:5000/BankingSystem";
 
+        public static async Task<string> GetUser(string userName)
+        {
+            var url = $"{BaseUrl}/GetUser?userName={userName}";
+
+            var task = await HttpClient.GetAsync(url);
+            var response = task.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
         public static async Task<string> CreateUser(string userName)
         {
             var url = $"{BaseUrl}/CreateUser?userName={userName}";

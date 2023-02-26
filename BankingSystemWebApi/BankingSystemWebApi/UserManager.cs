@@ -33,7 +33,7 @@ namespace BankingSystemWebApi
             if (_users.TryAdd(userName,
                     new User()
                     {
-                        UserName = userName
+                        Name = userName
                     })) 
                 return _users[userName];
 

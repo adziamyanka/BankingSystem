@@ -28,6 +28,27 @@ namespace BankingSystemTestProject.NUnitTests
             await CreateAccount(TestUserName, balance);
 
             ValidateSuccessfulResult();
+
+            await GetUser(TestUserName);
+
+            ValidateDefaultAccountBalance(balance);
+
+        }
+
+        [TestCase(100, 200)]
+        public async Task CreateTwoAccounts(int balance1, int balance2)
+        {
+            await CreateAccount(TestUserName, balance1);
+
+            ValidateSuccessfulResult();
+
+            await CreateAccount(TestUserName, balance2);
+
+            ValidateSuccessfulResult();
+
+            await GetUser(TestUserName);
+
+            ValidateAllUserAccounts(balance1, balance2);
         }
 
         [Test]
@@ -40,6 +61,30 @@ namespace BankingSystemTestProject.NUnitTests
             await CreateAccount(TestUserName, balance);
 
             ValidateError(errorMessage);
+        }
+
+        [Test]
+        public async Task DeleteAccount()
+        {
+            await CreateAccount(TestUserName, 200);
+
+            ValidateSuccessfulResult();
+
+            await DeleteAccount(TestUserName, DefaultAccountId);
+
+            ValidateSuccessfulResult();
+
+            await GetUser(TestUserName);
+
+            ValidateUserHasNoAccounts();
+        }
+
+        [Test]
+        public async Task DeleteNonExistentAccount()
+        {
+            await DeleteAccount(TestUserName, DefaultAccountId);
+
+            ValidateError($"User {TestUserName.ToLower()} doesn't have any accounts.");
         }
     }
 }

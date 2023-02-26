@@ -7,6 +7,8 @@ namespace BankingSystemTestProject.NUnitTests
     [TestFixture]
     public class WithdrawalTests : TestBase
     {
+        private const int DefaultBalance = 1000;
+
         [SetUp]
         public async Task SetUpTestUserWithAccount()
         {
@@ -23,14 +25,17 @@ namespace BankingSystemTestProject.NUnitTests
         [TestCase(0)]
         [TestCase(100)]
         [TestCase(899)]
-        [TestCase(10000)]
         public async Task WithdrawFromAccount(int withdrawal)
         {
-            await CreateAccount(TestUserName, 1000);
+            await CreateAccount(TestUserName, DefaultBalance);
 
-            await DepositToAccount(TestUserName, DefaultAccountId, withdrawal);
+            await WithdrawFromAccount(TestUserName, DefaultAccountId, withdrawal);
 
             ValidateSuccessfulResult();
+
+            await GetUser(TestUserName);
+
+            ValidateDefaultAccountBalance(DefaultBalance - withdrawal);
         }
       
         [Test]
