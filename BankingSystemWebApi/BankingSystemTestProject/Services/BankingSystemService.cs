@@ -6,7 +6,7 @@ namespace BankingSystemTestProject.Services
     public class BankingSystemService
     {
         private static readonly HttpClient HttpClient = new ();
-        private const string BaseUrl = "https://localhost:44384/BankingSystem";
+        private const string BaseUrl = "http://localhost:5000/BankingSystem";
 
         public static async Task<string> CreateUser(string userName)
         {
